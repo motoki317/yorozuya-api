@@ -17,8 +17,8 @@ func getEnvOrDefault(key string, fallback string) string {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", notFoundHandler)
-	mux.HandleFunc("/time-recorder/toggle", TimeRecorderToggle)
-	mux.HandleFunc("/time-recorder/status", TimeRecorderStatus)
+	mux.HandleFunc("POST /time-recorder/toggle", TimeRecorderToggle)
+	mux.HandleFunc("POST /time-recorder/status", TimeRecorderStatus)
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	logged := loggingMiddleware(logger)(mux)
