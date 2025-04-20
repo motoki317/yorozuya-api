@@ -21,6 +21,7 @@ type YorozuyaCredentials struct {
 
 type YorozuyaStatus struct {
 	Message   string `json:"message"`
+	State     string `json:"state"`
 	StartTime string `json:"startTime"`
 	LeaveTime string `json:"leaveTime"`
 }
@@ -69,6 +70,7 @@ func TimeRecorderToggle(w http.ResponseWriter, r *http.Request) {
 
 	respond(w, http.StatusOK, YorozuyaStatus{
 		Message:   "OK",
+		State:     s.state.String(),
 		StartTime: s.startTime,
 		LeaveTime: s.leaveTime,
 	})
@@ -96,6 +98,7 @@ func TimeRecorderStatus(w http.ResponseWriter, r *http.Request) {
 
 	respond(w, http.StatusOK, YorozuyaStatus{
 		Message:   "OK",
+		State:     s.state.String(),
 		StartTime: s.startTime,
 		LeaveTime: s.leaveTime,
 	})
@@ -109,10 +112,24 @@ type timeRecorderState int
 
 const (
 	timeRecorderStateUnknown timeRecorderState = iota
-	timeRecorderStateOff                       // 出社前
-	timeRecorderStateOn                        // 出社後
-	timeRecorderStateEnd                       // 退勤後
+	timeRecorderStateOff
+	timeRecorderStateOn
+	timeRecorderStateEnd
 )
+
+func (s timeRecorderState) String() string {
+	switch s {
+	case timeRecorderStateUnknown:
+		return "不明"
+	case timeRecorderStateOff:
+		return "未出社"
+	case timeRecorderStateOn:
+		return "出社済み"
+	case timeRecorderStateEnd:
+		return "退社済み"
+	}
+	return "unknown"
+}
 
 type YorozuyaSession struct {
 	client *http.Client
